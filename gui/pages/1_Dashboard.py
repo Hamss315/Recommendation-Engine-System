@@ -1,6 +1,4 @@
 import streamlit as st
-
-import streamlit as st
 @st.cache_resource
 def get_database():
     from pymongo import MongoClient
@@ -8,7 +6,6 @@ def get_database():
 
 db = get_database()
 
-from pymongo import MongoClient
 import pandas as pd
 import plotly.express as px
 

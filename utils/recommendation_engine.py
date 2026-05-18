@@ -1,8 +1,5 @@
 import pandas as pd
-from pymongo import MongoClient
 from sklearn.metrics.pairwise import cosine_similarity
-import streamlit as st
-
 import streamlit as st
 @st.cache_resource
 def get_database():

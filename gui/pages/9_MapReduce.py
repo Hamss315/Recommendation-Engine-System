@@ -1,6 +1,5 @@
 import streamlit as st
 
-import streamlit as st
 @st.cache_resource
 def get_database():
     from pymongo import MongoClient
@@ -8,7 +7,6 @@ def get_database():
 
 db = get_database()
 
-from pymongo import MongoClient
 import pandas as pd
 import plotly.express as px
 
@@ -18,7 +16,6 @@ st.info("Visualizes the outputs from the MapReduce job runs that were pre-loaded
 
 @st.cache_data(ttl=600)
 def load_mapreduce():
-    
     db = get_database()
     
     pe = pd.DataFrame(list(db.product_engagement.find().limit(500)))
@@ -31,11 +28,17 @@ def load_mapreduce():
         af.rename(columns={"_id": "Action Type", "value": "Frequency"}, inplace=True)
         af.sort_values(by="Frequency", ascending=False, inplace=True)
         
-    return pe, af
+    rating_yr = pd.DataFrame(list(db.rating_per_year.find()))
+    if not rating_yr.empty and "_id" in rating_yr.columns:
+        rating_yr.rename(columns={"_id": "Year", "value": "Total Ratings"}, inplace=True)
+        rating_yr["Year"] = rating_yr["Year"].astype(int, errors='ignore')
+        rating_yr.sort_values(by="Year", inplace=True)
+        
+    return pe, af, rating_yr
 
-pe, af = load_mapreduce()
+pe, af, rating_yr = load_mapreduce()
 
-tab1, tab2 = st.tabs(["Action Frequency", "Product Engagement"])
+tab1, tab2, tab3 = st.tabs(["Action Frequency", "Product Engagement", "Rating Per Year"])
 
 with tab1:
     st.subheader("Overall Action Frequency MapReduce")
@@ -56,3 +59,19 @@ with tab2:
     else:
         st.write("Displaying Top 500 Engaged Products (computed by MR jobs).")
         st.dataframe(pe, use_container_width=True)
+
+with tab3:
+    st.subheader("Total Ratings Provided Per Year (MapReduce)")
+    if rating_yr.empty:
+        st.warning("No data in `rating_per_year`.")
+    else:
+        col1, col2 = st.columns([1, 2])
+        with col1:
+            st.dataframe(rating_yr, use_container_width=True)
+        with col2:
+            try:
+                fig = px.line(rating_yr, x="Year", y="Total Ratings", markers=True)
+                st.plotly_chart(fig, use_container_width=True)
+            except Exception:
+                st.bar_chart(rating_yr.set_index("Year"))
+

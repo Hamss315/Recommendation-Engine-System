@@ -1,6 +1,5 @@
 import streamlit as st
 
-import streamlit as st
 @st.cache_resource
 def get_database():
     from pymongo import MongoClient
@@ -8,7 +7,6 @@ def get_database():
 
 db = get_database()
 
-from pymongo import MongoClient
 import pandas as pd
 
 st.set_page_config(page_title="Database Info", layout="wide")
@@ -45,7 +43,7 @@ st.markdown("""
 - **MongoDB**: Used as primary NoSQL data lake for products, reviews, and interactions logs. MapReduce job results, model endpoints (`ai_sentiment`), and processed datasets are natively available via indices.
 
 **Logic Layer**
-- **Python / Utils**: Helper abstraction libraries (like `recommendation_engine.py`) perform vectorized aggregations statically on loaded datasets if needed, preserving purity of the GUI without importing Notebooks.
+- **Python / Utils**: Helper abstraction libraries (like `fix_sockets.py`) perform vectorized aggregations statically on loaded datasets if needed, preserving purity of the GUI without importing Notebooks.
 
 **Presentation Layer**
 - **Streamlit**: Renders PyMongo DataFrames reactively using mult-page routing (`gui/pages/**`).

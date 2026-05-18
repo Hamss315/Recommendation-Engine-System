@@ -1,6 +1,5 @@
 import streamlit as st
 
-import streamlit as st
 @st.cache_resource
 def get_database():
     from pymongo import MongoClient
